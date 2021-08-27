@@ -20,45 +20,63 @@ struct compiller
     struct command
     {
         public:
-        virtual void function() = 0;
+        virtual void function(char * head) = 0;
         virtual ~command(){}
+        virtual void print() = 0;
     };
 
     char cpu[30000]={0};
     std::vector<command *> cmds;
+    char * head;
     static std::vector<command *>::iterator cmds_begin;
-    static char * head;
     static std::vector<command *>::iterator cur_cmd;
 
     struct minus : command
     {
-        void function()
+        void function(char * head)
         {
             (*head)--;
+        }
+
+        void print()
+        {
+            std::cout<<'-';
         }
     };
 
     struct plus : command
     {
-        void function()
+        void function(char * head)
         {
             (*head)++;
+        }
+        void print()
+        {
+            std::cout<<'+';
         }
     };
 
     struct right : command
     {
-        void function()
+        void function(char * head)
         {
             head++;
+        }
+        void print()
+        {
+            std::cout<<'>';
         }
     };
 
     struct left : command
     {
-        void function()
+        void function(char * head)
         {
             head--;
+        }
+        void print()
+        {
+            std::cout<<'<';
         }
     };
 
@@ -66,11 +84,11 @@ struct compiller
     {
         size_t right_ind;
 
-        void function()
+        void function(char * head)
         {
             if(*head == 0)
             {
-                cur_cmd = cmds_begin+right_ind;
+                cur_cmd = ++(cmds_begin+right_ind);
             }
             else
             {
@@ -78,10 +96,14 @@ struct compiller
             }
         }
 
-        public:
         void set_right_br_ind(size_t ind)
         {
             right_ind = ind;
+        }
+
+        void print()
+        {
+            std::cout<<'[';
         }
     };
 
@@ -89,11 +111,11 @@ struct compiller
     {
         size_t left_ind;
 
-        void function()
+        void function(char * head)
         {
             if(*head != 0)
             {
-                cur_cmd = cmds_begin+left_ind;
+                cur_cmd = ++(cmds_begin+left_ind);
             }
             else
             {
@@ -106,21 +128,30 @@ struct compiller
         {
             left_ind = ind;
         }
+
+        void print()
+        {
+            std::cout<<']';
+        }
     };
 
     struct point : command
     {
-        void function()
+        void function(char * head)
         {
             std::cout<<*head;
+        }
+        void print()
+        {
+            std::cout<<'.';
         }
     };
 
     struct coma : command
     {
-        void function()
+        void function(char * head)
         {
-            
+            std::cout<<(char)*head;
         }
     };
 
@@ -133,7 +164,7 @@ public:
         {
             switch (ch)
             {
-                default:
+                default: break;
                 case MINUS: cmds.push_back(new minus());
                 break;
                 case PLUS: cmds.push_back(new plus());
@@ -150,11 +181,13 @@ public:
                     ptr->set_left_br_ind(i_l_brs.back());
                     static_cast<left_bracket* >(cmds[i_l_brs.back()])->set_right_br_ind(cmds.size());
                     i_l_brs.pop_back();
+                    break;
                 }
                 case LEFT_BRACKET:
                 {
                     i_l_brs.push_back(cmds.size());
                     cmds.push_back(new left_bracket());
+                    break;
                 }
             }
         }
@@ -166,10 +199,19 @@ public:
     {
         while(cur_cmd != cmds.end())
         {
-            (*cur_cmd)->function();
+            (*cur_cmd)->function(head);
+            cur_cmd++;
+        }
+
+        for(char ch:cpu)
+        {
+            std::cout<<ch;
         }
     }    
 };
+std::vector<compiller::command *>::iterator compiller::cmds_begin={};
+std::vector<compiller::command *>::iterator compiller::cur_cmd={};
+
 
 int main()
 {
