@@ -20,20 +20,20 @@ struct compiller
     struct command
     {
         public:
-        virtual void function(char * head) = 0;
+        virtual void function() = 0;
         virtual ~command(){}
         virtual void print() = 0;
     };
 
     char cpu[30000]={0};
     std::vector<command *> cmds;
-    char * head;
+    static char * head;
     static std::vector<command *>::iterator cmds_begin;
     static std::vector<command *>::iterator cur_cmd;
 
     struct minus : command
     {
-        void function(char * head)
+        void function()
         {
             (*head)--;
         }
@@ -46,7 +46,7 @@ struct compiller
 
     struct plus : command
     {
-        void function(char * head)
+        void function()
         {
             (*head)++;
         }
@@ -58,9 +58,9 @@ struct compiller
 
     struct right : command
     {
-        void function(char * head)
+        void function()
         {
-            head++;
+            ++head;
         }
         void print()
         {
@@ -70,7 +70,7 @@ struct compiller
 
     struct left : command
     {
-        void function(char * head)
+        void function()
         {
             head--;
         }
@@ -84,15 +84,11 @@ struct compiller
     {
         size_t right_ind;
 
-        void function(char * head)
+        void function()
         {
             if(*head == 0)
             {
-                cur_cmd = ++(cmds_begin+right_ind);
-            }
-            else
-            {
-                cur_cmd++;
+                cur_cmd = cmds_begin+right_ind;
             }
         }
 
@@ -111,15 +107,11 @@ struct compiller
     {
         size_t left_ind;
 
-        void function(char * head)
+        void function()
         {
             if(*head != 0)
             {
-                cur_cmd = ++(cmds_begin+left_ind);
-            }
-            else
-            {
-                cur_cmd++;
+                cur_cmd = (cmds_begin+left_ind);
             }
         }
 
@@ -137,9 +129,9 @@ struct compiller
 
     struct point : command
     {
-        void function(char * head)
+        void function()
         {
-            std::cout<<*head;
+            std::cout<<(char)(*head);
         }
         void print()
         {
@@ -149,9 +141,13 @@ struct compiller
 
     struct coma : command
     {
-        void function(char * head)
+        void function()
         {
-            std::cout<<(char)*head;
+            std::cout<<"";
+        }
+        void print()
+        {
+            std::cout<<',';
         }
     };
 
@@ -180,6 +176,7 @@ public:
                     auto ptr = new right_bracket();
                     ptr->set_left_br_ind(i_l_brs.back());
                     static_cast<left_bracket* >(cmds[i_l_brs.back()])->set_right_br_ind(cmds.size());
+                    cmds.push_back(ptr);
                     i_l_brs.pop_back();
                     break;
                 }
@@ -197,18 +194,15 @@ public:
 
     void execute()
     {
-        while(cur_cmd != cmds.end())
+        do
         {
-            (*cur_cmd)->function(head);
+            (*cur_cmd)->function();
             cur_cmd++;
         }
-
-        for(char ch:cpu)
-        {
-            std::cout<<ch;
-        }
+        while(cur_cmd != cmds.end());
     }    
 };
+char * compiller::head = nullptr;
 std::vector<compiller::command *>::iterator compiller::cmds_begin={};
 std::vector<compiller::command *>::iterator compiller::cur_cmd={};
 
