@@ -1,1 +1,0 @@
-(*cur_cmd)->print();
