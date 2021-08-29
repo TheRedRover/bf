@@ -1,0 +1,6 @@
+valgrind*
+*.bf
+src
+cmake-build-debug
+bin
+build

@@ -1,12 +1,8 @@
 #include <cstddef>
 #include <exception>
 #include <iostream>
-#include <iterator>
-#include <stdexcept>
-#include <string>
 #include <vector>
 #include <fstream>
-#include <streambuf>
 
 const size_t BUF_SIZE = 30000;
 
@@ -104,18 +100,12 @@ class bfmachine
     char * fst = cpu;
     ci cf;
     ci cc;
-    std::vector<std::pair<char, size_t>> s_to_ps(const std::string str);
+    std::vector<std::pair<char, size_t>> s_to_ps(const std::string & str);
 public:
-    void init(const std::string str);
+    void init(const std::string & str);
 
-    void execute()
-    {
-        while(cc != cmds.end())
-        {
-            (*cc)->fn(hd, fst, cf, cc );
-            cc++;
-        }
-    }
+    void execute();
+
 
     virtual ~bfmachine()
     {
@@ -155,6 +145,11 @@ int main(int argc, char *argv[])
                 c.execute();
             }
             break;
+        }
+        default:
+        {
+            std::cout<<"To compile string use command ' bfmachine \"code_string\"'\n"<<
+            "To compile program from file use command ' bfmachine -f \"src_file\"'";
         }
     }
 }
@@ -218,7 +213,7 @@ void inpc::fn(int & hd, char * fst, ci & cf, ci & cc )
     std::cout<<"";
 }
 
-std::vector<std::pair<char, size_t>> bfmachine::s_to_ps(const std::string str)
+std::vector<std::pair<char, size_t>> bfmachine::s_to_ps(const std::string & str)
 {
     if(str.empty())
         throw std::invalid_argument("Code string is empty");
@@ -231,15 +226,15 @@ std::vector<std::pair<char, size_t>> bfmachine::s_to_ps(const std::string str)
             ++c;
         else
         {
-            sps.push_back(std::make_pair(*(i-1),c));
+            sps.emplace_back(std::make_pair(*(i-1),c));
             c=1;
         }
     }
-    sps.push_back(std::make_pair(str.back(),1));
+    sps.emplace_back(std::make_pair(str.back(),1));
     return sps;
 }
 
-void bfmachine::init(const std::string str)
+void bfmachine::init(const std::string & str)
 {
     if(!cmds.empty())
     {
@@ -271,15 +266,15 @@ void bfmachine::init(const std::string str)
                     throw std::logic_error("Left bracket '[' is missing");
                 auto ptr = new ecc();
                 ptr->setb(i_l_brs.back());
-                static_cast<bcc* >(cmds[i_l_brs.back()])->sete(cmds.size());
-                cmds.push_back(ptr);
+                dynamic_cast<bcc* >(cmds[i_l_brs.back()])->sete(cmds.size());
+                cmds.emplace_back(ptr);
                 i_l_brs.pop_back();
                 break;
             }
             case LEFT_BRACKET:
             {
-                i_l_brs.push_back(cmds.size());
-                cmds.push_back(new bcc());
+                i_l_brs.emplace_back(cmds.size());
+                cmds.emplace_back(new bcc());
                 break;
             }
         }
@@ -290,4 +285,13 @@ void bfmachine::init(const std::string str)
     }
     cf = cmds.begin();
     cc = cmds.begin();
+}
+
+void bfmachine::execute()
+{
+    while(cc != cmds.end())
+    {
+        (*cc)->fn(hd, fst, cf, cc );
+        cc++;
+    }
 }
