@@ -23,7 +23,7 @@ void mvlc::fn(int & hd, char * fst, ci & cf, ci & cc )
         throw std::range_error("Head position is less than buffer");
 }
 
-void bcc::fn(int & hd, char * fst, ci & cf, ci & cc )
+void blc::fn(int & hd, char * fst, ci & cf, ci & cc )
 {
     if(fst[hd] == 0)
     {
@@ -31,12 +31,12 @@ void bcc::fn(int & hd, char * fst, ci & cf, ci & cc )
     }
 }
 
-void bcc::sete(size_t ind)
+void blc::sete(size_t ind)
 {
     right_ind = ind;
 }
 
-void ecc::fn(int & hd, char * fst, ci & cf, ci & cc )
+void elc::fn(int & hd, char * fst, ci & cf, ci & cc )
 {
     if(fst[hd] != 0)
     {
@@ -44,7 +44,7 @@ void ecc::fn(int & hd, char * fst, ci & cf, ci & cc )
     }
 }
 
-void ecc::setb(size_t ind)
+void elc::setb(size_t ind)
 {
     left_ind = ind;
 }
@@ -60,12 +60,12 @@ void inpc::fn(int & hd, char * fst, ci & cf, ci & cc )
     std::cout<<"";
 }
 
-std::vector<char_amount>> bfmachine::s_to_ps(const std::string & str)
+std::vector<char_amount> bfmachine::s_to_ps(const std::string & str)
 {
     if(str.empty())
         throw std::invalid_argument("Code string is empty");
 
-    std::vector<char_amount>> sps;
+    std::vector<char_amount> sps;
     size_t c = 1;
     for(auto i = ++str.begin(); i!=str.end(); ++i)
     {
@@ -91,7 +91,7 @@ void bfmachine::init(const std::string & str)
         }
     }
     auto ps = s_to_ps(str);
-    std::vector<size_t> i_l_brs;
+    std::vector<size_t> ibls;
     for (auto p:ps)
     {
         switch (p.first)
@@ -109,24 +109,24 @@ void bfmachine::init(const std::string & str)
                 break;
             case RIGHT_BRACKET:
             {
-                if(i_l_brs.empty())
+                if(ibls.empty())
                     throw std::logic_error("Left bracket '[' is missing");
-                auto ptr = new ecc();
-                ptr->setb(i_l_brs.back());
-                dynamic_cast<bcc* >(cmds[i_l_brs.back()])->sete(cmds.size());
+                auto ptr = new elc();
+                ptr->setb(ibls.back());
+                dynamic_cast<blc* >(cmds[ibls.back()])->sete(cmds.size());
                 cmds.emplace_back(ptr);
-                i_l_brs.pop_back();
+                ibls.pop_back();
                 break;
             }
             case LEFT_BRACKET:
             {
-                i_l_brs.emplace_back(cmds.size());
-                cmds.emplace_back(new bcc());
+                ibls.emplace_back(cmds.size());
+                cmds.emplace_back(new blc());
                 break;
             }
         }
     }
-    if(i_l_brs.size()>0)
+    if(ibls.empty())
     {
         throw std::logic_error("Right bracket ']' is missing");
     }

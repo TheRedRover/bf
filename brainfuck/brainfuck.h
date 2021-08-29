@@ -69,20 +69,20 @@ public:
     void fn(int & hd, char * fst, ci & cf, ci & cc ) override;
 };
 
-class bcc : public cmd
+class blc : public cmd
 {
     size_t right_ind;
 public:
-    bcc(){}
+    blc(){}
     void fn(int & hd, char * fst, ci & cf, ci & cc ) override;
     void sete(size_t ind);
 };
 
-class ecc : public cmd
+class elc : public cmd
 {
     size_t left_ind;
 public:
-    ecc(){}
+    elc(){}
     void fn(int & hd, char * fst, ci & cf, ci & cc ) override;
     void setb(size_t ind);
 };
