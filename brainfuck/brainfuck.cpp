@@ -60,12 +60,12 @@ void inpc::fn(int & hd, char * fst, ci & cf, ci & cc )
     std::cout<<"";
 }
 
-std::vector<std::pair<char, size_t>> bfmachine::s_to_ps(const std::string & str)
+std::vector<char_amount>> bfmachine::s_to_ps(const std::string & str)
 {
     if(str.empty())
         throw std::invalid_argument("Code string is empty");
 
-    std::vector<std::pair<char, size_t>> sps;
+    std::vector<char_amount>> sps;
     size_t c = 1;
     for(auto i = ++str.begin(); i!=str.end(); ++i)
     {

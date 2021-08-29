@@ -25,6 +25,8 @@ enum cmds
     LEFT_BRACKET = '['
 };
 
+typedef std::pair<char, size_t> char_amount;
+
 class cmd
 {
 protected:
