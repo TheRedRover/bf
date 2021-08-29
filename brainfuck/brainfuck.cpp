@@ -14,13 +14,13 @@ void incc::fn(int & hd, char * fst, ci & cf, ci & cc )
 void mvrc::fn(int & hd, char * fst, ci & cf, ci & cc )
 {
     if((hd+=n)>=BUF_SIZE)
-        throw std::range_error("Head position is bigger than buffer");
+        throw std::range_error("Head position is bigger than buffer\n");
 }
 
 void mvlc::fn(int & hd, char * fst, ci & cf, ci & cc )
 {
     if((hd-=n)<0)
-        throw std::range_error("Head position is less than buffer");
+        throw std::range_error("Head position is less than buffer\n");
 }
 
 void blc::fn(int & hd, char * fst, ci & cf, ci & cc )
@@ -63,7 +63,7 @@ void inpc::fn(int & hd, char * fst, ci & cf, ci & cc )
 std::vector<char_amount> bfmachine::s_to_ps(const std::string & str)
 {
     if(str.empty())
-        throw std::invalid_argument("Code string is empty");
+        throw std::invalid_argument("Code string is empty\n");
 
     std::vector<char_amount> sps;
     size_t c = 1;
@@ -91,6 +91,8 @@ void bfmachine::init(const std::string & str)
         }
     }
     auto ps = s_to_ps(str);
+    if (ps.empty())
+        throw std::logic_error("there is no brainfuck code in the code string/file\n");
     std::vector<size_t> ibls;
     for (auto p:ps)
     {
@@ -110,7 +112,7 @@ void bfmachine::init(const std::string & str)
             case RIGHT_BRACKET:
             {
                 if(ibls.empty())
-                    throw std::logic_error("Left bracket '[' is missing");
+                    throw std::logic_error("Left bracket '[' is missing\n");
                 auto ptr = new elc();
                 ptr->setb(ibls.back());
                 dynamic_cast<blc* >(cmds[ibls.back()])->sete(cmds.size());
@@ -128,7 +130,7 @@ void bfmachine::init(const std::string & str)
     }
     if(ibls.empty())
     {
-        throw std::logic_error("Right bracket ']' is missing");
+        throw std::logic_error("Right bracket ']' is missing\n");
     }
     cf = cmds.begin();
     cc = cmds.begin();

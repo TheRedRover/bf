@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
                     std::string file_name = argv[2];
                     std::ifstream f(file_name);
                     if (!f.good()) {
-                        throw std::invalid_argument("Such file doesn't exist");
+                        throw std::invalid_argument("Such file doesn't exist\n");
                     }
                     std::string str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
                     std::cout << str;
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
             }
             default: {
                 std::cout << "To compile code string use command ' bfmachine \"code_string\"'\n" <<
-                          "To compile program from file use command ' bfmachine -f \"src_file\"'";
+                          "To compile program from file use command ' bfmachine -f \"src_file\"'\n";
             }
         }
     }
